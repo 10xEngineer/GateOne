@@ -8,6 +8,7 @@ import sys, os
 POSIX = 'posix' in sys.builtin_module_names
 version = '1.1'
 setup_dir = os.path.dirname(os.path.abspath(__file__))
+
 major, minor = sys.version_info[:2] # Python version
 if major == 2 and minor <=5:
     print("Gate One requires Python 2.6+.  You are running %s" % sys.version)
@@ -60,9 +61,10 @@ def walk_data_files(path, install_path=prefix):
             del dirs[dirs.index("vendor")]
 
         thesefiles = []
-        shortened_path = dirpath.split(setup_dir)[2][1:]
+        # TODO - fix; works only within second level folder and more
+        shortened_path = dirpath.split(setup_dir)[1][1:]
 
-        final_path = os.path.join(install_path, 'gateone', shortened_path)
+        final_path = os.path.join(install_path, shortened_path)
 
         for fname in filenames:
             file_path = os.path.join(dirpath, fname)
