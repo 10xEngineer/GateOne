@@ -52,12 +52,15 @@ def walk_data_files(path, install_path=prefix):
         if ".git" in dirs:
             del dirs[dirs.index(".git")]
         thesefiles = []
-        shortened_path = dirpath.split(setup_dir)[1][1:]
-        final_path = os.path.join(install_path, shortened_path)
+        shortened_path = dirpath.split(setup_dir)[2][1:]
+
+        final_path = os.path.join(install_path, 'gateone', shortened_path)
+
         for fname in filenames:
             file_path = os.path.join(dirpath, fname)
             thesefiles.append(file_path)
         out.append((final_path, thesefiles))
+
     return out
 
 # Take care of our data files
