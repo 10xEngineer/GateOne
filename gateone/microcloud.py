@@ -43,10 +43,14 @@ class MicrocloudAuthHandler(BaseAuthHandler):
       return
 
     # FIXME hardcoded
+    # TODO id specific to particular hostnode
     lab_definition = {
-        'lab_id': '0x31415',
-        'data': 'doh'
-        }
+        'lab_id': 'e27ee9f',
+        'vm': [
+          {'id': '052681f0-9831-012f-7f05-0800272cf3a1', 'alias': 'webserv', 'ip_addr': '10.0.3.229'},
+          {'id': '0af07d60-9826-012f-6c48-0800272cf3a1', 'alias': 'dbserv', 'ip_addr': '10.0.3.169'}
+        ]
+    }
 
     self.user_login('10xeng', lab_definition)
     
