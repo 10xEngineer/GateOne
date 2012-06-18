@@ -21,9 +21,12 @@ _ = get_translation()
 class MicrocloudAuthHandler(BaseAuthHandler):
   @tornado.web.asynchronous
   def get(self):
-    logging.info("Microcloud::get")
     check = self.get_argument("check", None)
     if check:
+      # TODO testing user session contents
+      logging.debug("*** microcloud check lab")
+      logging.debug(self.get_secure_cookie('gateone_user'))
+
       self.set_header ('Access-Control-Allow-Origin', '*')
       user = self.get_current_user()
       if user:
@@ -39,7 +42,13 @@ class MicrocloudAuthHandler(BaseAuthHandler):
       self.user_logout('10xeng')
       return
 
-    self.user_login('10xeng')
+    # FIXME hardcoded
+    lab_definition = {
+        'lab_id': '0x31415',
+        'data': 'doh'
+        }
+
+    self.user_login('10xeng', lab_definition)
     
     next_url = self.get_argument("next", None)
     if next_url:
@@ -47,4 +56,42 @@ class MicrocloudAuthHandler(BaseAuthHandler):
     else:
       self.redirect(self.settings['url_prefix'])
 
+  def user_login(self, user, lab_def):
+    """
+    Called immediately after a user authenticates successfully.  Saves
+    session information in the user's directory.  Expects *user* to be a
+    string containing the username or userPrincipalName. e.g. 'user@REALM'
+    or just 'someuser'.
+    """
+    logging.debug("!!!! microcloud user_login(%s)" % user)
+    # Make a directory to store this user's settings/files/logs/etc
+    user_dir = os.path.join(self.settings['user_dir'], user)
+    logging.debug("user_dir = %s " % user_dir)
+    if not os.path.exists(user_dir):
+        logging.info(_("Creating user directory: %s" % user_dir))
+        mkdir_p(user_dir)
+        os.chmod(user_dir, 0o700)
+
+    session_file = os.path.join(user_dir, 'session')
+    session_file_exists = os.path.exists(session_file)
+    if session_file_exists:
+        session_data = open(session_file).read()
+        try:
+            session_info = tornado.escape.json_decode(session_data)
+        except ValueError: # Something wrong with the file
+            session_file_exists = False # Overwrite it below
+    if not session_file_exists:
+        with open(session_file, 'w') as f:
+            # Save it so we can keep track across multiple clients
+            session_info = {
+                'upn': user, # FYI: UPN == userPrincipalName
+                'session': generate_session_id(),
+                'lab': lab_def
+            }
+            session_info_json = tornado.escape.json_encode(session_info)
+            f.write(session_info_json)
+    self.set_secure_cookie(
+        "gateone_user", tornado.escape.json_encode(session_info))
+
+    
   
