@@ -295,6 +295,9 @@ from utils import string_to_syslog_facility, fallback_bell, json_encode
 from utils import write_pid, read_pid, remove_pid, drop_privileges
 from utils import recursive_chown, ChownError
 
+# Microcloud specific
+from microcloud import MicrocloudAuthHandler
+
 # Setup the locale functions before anything else
 locale.set_default_locale('en_US')
 user_locale = None # Replaced with the actual user locale object in __main__
@@ -2020,6 +2023,8 @@ class Application(tornado.web.Application):
                 AuthHandler = PAMAuthHandler
             elif settings['auth'] == 'google':
                 AuthHandler = GoogleAuthHandler
+            elif settings['auth'] == 'microcloud':
+                AuthHandler = MicrocloudAuthHandler
             logging.info(_("Using %s authentication" % settings['auth']))
         else:
             logging.info(_("No authentication method configured. All users will "
