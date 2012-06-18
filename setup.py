@@ -26,6 +26,7 @@ templates_dir = os.path.join(setup_dir, 'gateone', 'templates')
 docs_dir = os.path.join(setup_dir, 'gateone', 'docs')
 tests_dir = os.path.join(setup_dir, 'gateone', 'tests')
 i18n_dir = os.path.join(setup_dir, 'gateone', 'i18n')
+tenxeng_dir = os.path.join(setup_dir, 'gateone', '10xeng')
 combined_js = os.path.join(static_dir, 'combined_plugins.js')
 with open(combined_js, 'w') as f:
     f.write('// This forces the file to be recreated')
@@ -51,6 +52,13 @@ def walk_data_files(path, install_path=prefix):
     for (dirpath, dirs, filenames) in os.walk(path):
         if ".git" in dirs:
             del dirs[dirs.index(".git")]
+
+        if ".bundle" in dirs:
+            del dirs[dirs.index(".bundle")]
+
+        if "vendor" in dirs:
+            del dirs[dirs.index("vendor")]
+
         thesefiles = []
         shortened_path = dirpath.split(setup_dir)[2][1:]
 
@@ -70,6 +78,7 @@ def walk_data_files(path, install_path=prefix):
 gateone_files=[ # Start with the basics...
     (os.path.join(prefix, 'gateone'), [
         os.path.join(setup_dir, 'gateone', 'auth.py'),
+        os.path.join(setup_dir, 'gateone', 'microcloud.py'),
         os.path.join(setup_dir, 'gateone', 'gateone.py'),
         os.path.join(setup_dir, 'gateone', 'logviewer.py'),
         os.path.join(setup_dir, 'gateone', 'sso.py'),
@@ -78,6 +87,7 @@ gateone_files=[ # Start with the basics...
         os.path.join(setup_dir, 'gateone', 'utils.py'),
         os.path.join(setup_dir, 'gateone', 'authpam.py'),
         os.path.join(setup_dir, 'gateone', 'remote_syslog.py'),
+        os.path.join(setup_dir, 'gateone', 'server.conf.10xeng'),
         os.path.join(setup_dir, 'README.rst'),
         os.path.join(setup_dir, 'LICENSE.txt'),
         os.path.join(setup_dir, 'babel_gateone.cfg')
@@ -89,6 +99,7 @@ docs_files = walk_data_files(docs_dir)
 plugin_files = walk_data_files(plugins_dir)
 test_files = walk_data_files(tests_dir)
 i18n_files = walk_data_files(i18n_dir)
+tenxeng_files = walk_data_files(tenxeng_dir)
 # Put it all together
 data_files = (
     gateone_files +
@@ -97,7 +108,8 @@ data_files = (
     docs_files +
     plugin_files +
     test_files +
-    i18n_files
+    i18n_files +
+    tenxeng_files
 )
 
 setup(
