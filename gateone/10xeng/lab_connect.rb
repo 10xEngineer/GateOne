@@ -16,12 +16,12 @@ if File.exists?(session_file)
   puts "Lab environment"
   puts
   session["lab"]["vms"].each do |vm|
-    puts "\t#{vm["alias"]}\t#{vm["ip_addr"]}\t#{vm["id"]}"
+    puts "\t#{vm["vm_name"]} (#{vm["vm_type"]})\t#{vm["ip_addr"]}\t#{vm["id"]}"
   end
   puts
 
   # TODO support vm_id passed using command line parameter
-  vm_list = session["lab"]["vms"].map {|vm| vm["alias"]}
+  vm_list = session["lab"]["vms"].map {|vm| vm["vm_name"]}
 
   target = ask("server? ") {|q| q.default = vm_list.first}
 
