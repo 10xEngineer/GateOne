@@ -12,6 +12,7 @@ from utils import get_translation
 import tornado.web
 import tornado.auth
 import tornado.escape
+import requests
 
 from auth import BaseAuthHandler
 
@@ -42,17 +43,32 @@ class MicrocloudAuthHandler(BaseAuthHandler):
       self.user_logout('10xeng')
       return
 
-    # FIXME hardcoded
-    # TODO id specific to particular hostnode
-    lab_definition = {
-        'lab_id': 'e27ee9f',
-        'vm': [
-          {'id': '052681f0-9831-012f-7f05-0800272cf3a1', 'alias': 'webserv', 'ip_addr': '10.0.3.229'},
-          {'id': '0af07d60-9826-012f-6c48-0800272cf3a1', 'alias': 'dbserv', 'ip_addr': '10.0.3.169'}
-        ]
-    }
+    # TODO microcloud endpoint from environment
+    # TODO check if it's valid / set
+    endpoint = os.environ['MICROCLOUD']
 
-    self.user_login('10xeng', lab_definition)
+    # parse lab token from domain name
+    hostname = self.request.host.split(':')[0]
+
+    # TODO harcoded domains & better checking
+    if hostname.endswith('.demo.10xlabs.net'):
+      lab_token = hostname.split('.')[0]
+    else:
+      lab_token = None
+
+    # FIXME handle invalid tokens
+    # FIXME error handling
+    logging.debug("Authention for lab " + lab_token)
+
+    # TODO no error handling whatsoever
+    # http://docs.python-requests.org/en/latest/index.html
+    req = requests.get(endpoint + "/labs/" + lab_token)
+    lab = req.json
+
+    if not 'vms' in lab:
+      lab['vms'] = []
+
+    self.user_login('10xeng', lab)
     
     next_url = self.get_argument("next", None)
     if next_url:

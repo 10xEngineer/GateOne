@@ -15,13 +15,13 @@ if File.exists?(session_file)
 
   puts "Lab environment"
   puts
-  session["lab"]["vm"].each do |vm|
+  session["lab"]["vms"].each do |vm|
     puts "\t#{vm["alias"]}\t#{vm["ip_addr"]}\t#{vm["id"]}"
   end
   puts
 
   # TODO support vm_id passed using command line parameter
-  vm_list = session["lab"]["vm"].map {|vm| vm["alias"]}
+  vm_list = session["lab"]["vms"].map {|vm| vm["alias"]}
 
   target = ask("server? ") {|q| q.default = vm_list.first}
 
@@ -35,7 +35,7 @@ if File.exists?(session_file)
   cmd_parts = cmd_parts + ARGV
 
   # TODO hardcoded user/port
-  vm = session["lab"]["vm"].select {|vm| vm["alias"] == target}
+  vm = session["lab"]["vms"].select {|vm| vm["alias"] == target}
   vm = vm.first
 
   cmd_parts << "ssh://ubuntu@#{vm["ip_addr"]}"

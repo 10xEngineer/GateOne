@@ -90,6 +90,7 @@ gateone_files=[ # Start with the basics...
         os.path.join(setup_dir, 'gateone', 'authpam.py'),
         os.path.join(setup_dir, 'gateone', 'remote_syslog.py'),
         os.path.join(setup_dir, 'gateone', 'server.conf.10xeng'),
+	os.path.join(setup_dir, 'gateone', 'gateone.sh'),
         os.path.join(setup_dir, 'README.rst'),
         os.path.join(setup_dir, 'LICENSE.txt'),
         os.path.join(setup_dir, 'babel_gateone.cfg')
