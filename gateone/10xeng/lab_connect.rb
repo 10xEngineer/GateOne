@@ -16,7 +16,7 @@ if File.exists?(session_file)
   puts "Lab environment"
   puts
   session["lab"]["vms"].each do |vm|
-    puts "\t#{vm["vm_name"]} (#{vm["vm_type"]})\t#{vm["ip_addr"]}\t#{vm["id"]}"
+    puts "\t#{vm["vm_name"]} (#{vm["vm_type"]})\t#{vm["descriptor"]["ip_addr"]}\t#{vm["id"]}"
   end
   puts
 
@@ -35,10 +35,10 @@ if File.exists?(session_file)
   cmd_parts = cmd_parts + ARGV
 
   # TODO hardcoded user/port
-  vm = session["lab"]["vms"].select {|vm| vm["alias"] == target}
+  vm = session["lab"]["vms"].select {|vm| vm["vm_name"] == target}
   vm = vm.first
 
-  cmd_parts << "ssh://ubuntu@#{vm["ip_addr"]}"
+  cmd_parts << "ssh://ubuntu@#{vm["descriptor"]["ip_addr"]}"
 
   cmd = cmd_parts.join(" ")
 
