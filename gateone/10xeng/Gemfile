@@ -2,3 +2,4 @@ source 'http://rubygems.org'
 
 gem 'yajl-ruby'
 gem 'highline'
+gem "microcloud"

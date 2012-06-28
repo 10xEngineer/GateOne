@@ -57,18 +57,18 @@ class MicrocloudAuthHandler(BaseAuthHandler):
       lab_token = None
 
     # FIXME handle invalid tokens
-    # FIXME error handling
     logging.debug("Authention for lab " + lab_token)
 
-    # TODO no error handling whatsoever
+    # TODO verify lab_token before storing in session
+    #      throw error on 404/401
     # http://docs.python-requests.org/en/latest/index.html
-    req = requests.get(endpoint + "/labs/" + lab_token)
-    lab = req.json
+    #req = requests.get(endpoint + "/labs/" + lab_token)
+    #lab = req.json
 
-    if not 'vms' in lab:
-      lab['vms'] = []
-
-    self.user_login('10xeng', lab)
+    #if not 'vms' in lab:
+    #  lab['vms'] = []
+    
+    self.user_login('10xeng', lab_token)
     
     next_url = self.get_argument("next", None)
     if next_url:
@@ -76,7 +76,7 @@ class MicrocloudAuthHandler(BaseAuthHandler):
     else:
       self.redirect(self.settings['url_prefix'])
 
-  def user_login(self, user, lab_def):
+  def user_login(self, user, lab_token):
     """
     Called immediately after a user authenticates successfully.  Saves
     session information in the user's directory.  Expects *user* to be a
@@ -106,7 +106,7 @@ class MicrocloudAuthHandler(BaseAuthHandler):
             session_info = {
                 'upn': user, # FYI: UPN == userPrincipalName
                 'session': generate_session_id(),
-                'lab': lab_def
+                'lab': lab_token
             }
             session_info_json = tornado.escape.json_encode(session_info)
             f.write(session_info_json)
